@@ -1,0 +1,54 @@
+[package]
+name = "myco-studio"
+version = "0.1.0"
+description = "Myco Studio —— 跨平台数据库客户端（MySQL / MariaDB / TiDB / SQLite）"
+authors = ["you"]
+edition = "2024"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+# The `_lib` suffix may seem redundant but it is necessary
+# to make the lib name unique and wouldn't conflict with the bin name.
+# This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
+name = "myco_studio_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-opener = "2"
+tauri-plugin-dialog = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sqlx = { version = "0.9", features = ["runtime-tokio", "tls-rustls", "mysql", "sqlite", "postgres", "chrono"] }
+# Oracle：官方 thin 驱动，纯 Rust，不需要 Instant Client（只支持 19c / 21c / 26ai）
+oracledb = "26.0.0-beta.4"
+# Redis（非关系型驱动族第一个引擎）：官方 client，原生 tokio 异步
+redis = { version = "1.7", features = ["tokio-comp", "connection-manager"] }
+# MongoDB（非关系型驱动族第二个引擎）：官方 driver，原生 tokio 异步
+mongodb = "3"
+tokio = { version = "1", features = ["full"] }
+thiserror = "2"
+uuid = { version = "1", features = ["v4", "serde"] }
+dirs = "7"
+tracing = "0.1"
+async-trait = "0.1"
+chrono = { version = "0.4", default-features = false, features = ["std"] }
+futures = "0.3"
+csv = "1"
+encoding_rs = "0.8"
+russh = "0.64.1"
+reqwest = { version = "0.13", default-features = false, features = ["json", "rustls"] }
+rig-core = { version = "0.44", features = ["reqwest"] }
+quick-xml = "0.42.0"
+
+# Read the optimization guideline for more details: https://tauri.app/concept/size/#cargo-configuration
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 3
+panic = "abort"
+strip = true
